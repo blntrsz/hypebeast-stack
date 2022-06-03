@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
 import { z } from "zod";
@@ -8,7 +9,14 @@ export const appRouter = trpc.router().query("hello", {
       text: z.string().nullish(),
     })
     .nullish(),
-  resolve({ input }) {
+  async resolve({ input }) {
+    // Creating a new record
+    const p = new PrismaClient()
+    await p.user.create({
+      data: {
+        email: 'alice@email.com',
+      }
+    })
     return {
       greeting: `hello ${input?.text ?? "world"}`,
     };
